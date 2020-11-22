@@ -258,12 +258,8 @@
 
     function ImportData(SequenceData) {
 
+        
         var Proj = app.thisproject, Home = (Proj.activeItem.typeName == "Folder") ? Proj.activeItem : Proj.root
-
-
-        if Proj.activeItem.typeName == "Folder" {
-
-        }
 
         var importOptions = new ImportOptions(files[index]);
         importOptions.sequence = true;
@@ -274,7 +270,7 @@
 
 
 
-    }
+    } // ImportData function
 
 
 
