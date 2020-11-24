@@ -1,13 +1,13 @@
-// RSpass2AE by Keerah
+// Pass_port by Keerah
 // prototype ver 0.1
 
-(function RSpass2AE(thisObj) {
+(function Pass_port(thisObj) {
 
-    var RSpass2AE =  new Object;
-        RSpass2AE.scriptName = "RS passes to AE";
-        RSpass2AE.version = "0.25";
-        RSpass2AE.AOVtag = "_AOV_";
-        RSpass2AE.homeFolderName = "RS render passes";
+    var Pass_port = new Object;
+        Pass_port.scriptName = "RS passes to AE";
+        Pass_port.version = "0.25";
+        Pass_port.AOVtag = "_AOV_";
+        Pass_port.homeFolderName = "RS render passes";
 
     var passList = [{name: "Beauty", tag: "Beauty", type: 0, light: false},
                     {name: "Diffuse Lighting", tag: "Diffuse", type: 0, light: true}, 
@@ -112,7 +112,7 @@
             }   
         } else {
 
-            alert("The specified folder was not found", RSpass2AE.scriptName);
+            alert("The specified folder was not found", Pass_port.scriptName);
             return 0
         } // if folder exists
 
@@ -123,7 +123,7 @@
 
         } else {
 
-            alert("There were no sequence files found in the folder", RSpass2AE.scriptName)
+            alert("There were no sequence files found in the folder", Pass_port.scriptName)
             return 0
         } // if myFiles has files
     } // getfiles()
@@ -141,7 +141,7 @@
             
             for (var i = 0; i < sourceFiles.length; i++) {
                 
-                aovTagPos = sourceFiles[i].name.indexOf(RSpass2AE.AOVtag); // aov tag not present
+                aovTagPos = sourceFiles[i].name.indexOf(Pass_port.AOVtag); // aov tag not present
                 if (aovTagPos != -1) {
 
                     baseName = sourceFiles[i].name.substring(0, aovTagPos);
@@ -191,8 +191,8 @@
                 if (counterPos == -1) counterPos = sourceFiles[i].name.length;
                 
                 // checking for AOV tag presence right next to the baseName
-                aovPos = sourceFiles[i].name.search(RSpass2AE.AOVtag);
-                if (aovPos != -1) afterNamePos = aovPos + RSpass2AE.AOVtag.length;
+                aovPos = sourceFiles[i].name.search(Pass_port.AOVtag);
+                if (aovPos != -1) afterNamePos = aovPos + Pass_port.AOVtag.length;
                 strippedNames[i] = sourceFiles[i].name.substring(afterNamePos, counterPos);
             }
 
@@ -289,7 +289,7 @@
                 importHome = (currentProj.activeItem.typeName == "Folder") ? currentProj.activeItem : currentProj.rootFolder
             }
 
-            homeFolder = currentProj.items.addFolder(RSpass2AE.homeFolderName);
+            homeFolder = currentProj.items.addFolder(Pass_port.homeFolderName);
             homeFolder.parentFolder = importHome;
             var setFolder = currentProj.items.addFolder(baseName + " Footage");
             setFolder.parentFolder = homeFolder;
@@ -381,7 +381,7 @@
     
         
         // PALETTE
-        var palette = (thisObj instanceof Panel) ? thisObj : new Window("palette", RSpass2AE.scriptName + " v" + RSpass2AE.version, undefined, {resizeable: true});    
+        var palette = (thisObj instanceof Panel) ? thisObj : new Window("palette", Pass_port.scriptName + " v" + Pass_port.version, undefined, {resizeable: true});    
 
         if (palette !== null)
         {
