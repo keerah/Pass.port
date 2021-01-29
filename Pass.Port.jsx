@@ -1,58 +1,430 @@
-// Pass_port by Keerah
-// prototype ver 0.1
+﻿// Pass_port by Keerah
+// prototype ver 0.33
 
 (function Pass_port(thisObj) {
 
     var Pass_port = new Object;
         Pass_port.scriptName = "Pass.port";
-        Pass_port.version = "0.31";
-        Pass_port.AOVtag = "_AOV_";
-        Pass_port.homeFolderName = "RS render passes";
-        Pass_port.logFile = app.project.file.path + "\\pass.port_log.txt";
+        Pass_port.version = "0.33";
+        Pass_port.AOVtag = (getSettings("AOVtag") != null) ? getSettings("AOVtag") : "_AOV_";
+        Pass_port.frameRate = (getSettings("frameRate") != null) ? getSettings("frameRate") : 30;
+        Pass_port.lastRules = (getSettings("lastRules") != null) ? getSettings("lastRules") : 0;
+        Pass_port.lastPath = (getSettings("lastPath") != null) ? getSettings("lastPath") : null;
+        Pass_port.autoComp = (getSettings("autoComp") != null) ? getSettings("autoComp") : true;
+        Pass_port.homeFolderName = (getSettings("homeFolderName") != null) ? getSettings("homeFolderName") : "RS render passes";
+        Pass_port.logFile = (getSettings("logFile") != null) ? getSettings("logFile") : "pass.port_log.txt";
+        Pass_port.logFile = (app.project.file != null) ? app.project.file.path + "\\" + Pass_port.logFile : Folder.desktop.fsName + "\\" + Pass_port.logFile;
 
-    var passList = [{name: "Beauty", tag: "Beauty", alttag: "Beauty", type: 0, light: false},
-                    {name: "Diffuse Lighting", tag: "Diffuse", alttag: "Diff", type: 0, light: true}, 
-                    {name: "Specular Lighting", tag: "Speculars", alttag: "Specs", type: 0, light: true},
-                    {name: "Reflections", tag: "Reflections", alttag: "Reflect", type: 0, light: true},
-                    {name: "Refractions", tag: "Refractions", alttag: "Refract", type: 0, light: true},
-                    {name: "Subsurface Scatter", tag: "SSS", alttag: "Subsurface", type: 0, light: true},
-                    {name: "Caustics", tag: "Caustics", alttag: "Caust", type: 0, light: true},
-                    {name: "Emission", tag: "Emission", alttag: "Emissive", type: 0, light: true},
-                    {name: "Global Illumination", tag: "GI", alttag: "Global", type: 0, light: true},
-                    {name: "Volume Lighting", tag: "VolumeLighting", alttag: "VolLight", type: 0, light: true},
-                    {name: "Volume Fog Emission", tag: "VolumeFogEmission", alttag: "VolFogEm", type: 0, light: false},
-                    {name: "Volume Fog Tint", tag: "VolumeFogTint", alttag: "VolFogTint", type: 0, light: false},
-                    {name: "Background", tag: "Background", alttag: "BG", type: 0, light: false},
-                    {name: "Diffuse Filter", tag: "DiffuseFilter", alttag: "DiffFlt", type: 1, light: true},
-                    {name: "Diffuse Lighting Raw", tag: "DiffuseLightingRaw", alttag: "DiffRaw", type: 1, light: true},
-                    {name: "Reflection Filter", tag: "ReflectionFilter", alttag: "ReflFlt", type: 1, light: true},
-                    {name: "Reflection Raw", tag: "ReflectionRaw", alttag: "ReflRaw", type: 1, light: true},
-                    {name: "Refraction Filter", tag: "RefractionFilter", alttag: "RefrFlt", type: 1, light: true},
-                    {name: "Refraction Raw", tag: "RefractionRaw", alttag: "RefrRaw", type: 1, light: true},
-                    {name: "Subscatter Surface Raw", tag: "SubscatterSurfaceRaw", alttag: "SSSRaw", type: 1, light: true},
-                    {name: "Global Illumination Raw", tag: "GIRaw", alttag: "GlobalRaw", type: 1, light: true},
-                    {name: "Caustics Raw", tag: "CausticsRaw", alttag: "CaustRaw", type: 1, light: true},
-                    {name: "Translucency Filter", tag: "TransTint", alttag: "TransFlt", type: 1, light: false},
-                    {name: "Transclucency Lighting Raw", tag: "TotalTransLightingRaw", alttag: "TransRaw", type: 1, light: false},
-                    {name: "Translucency GI Raw", tag: "TranslucencyGIRaw", alttag: "TransGIRaw", type: 1, light: false},
-                    {name: "World Position", tag: "WorldPosition", alttag: "WorldPos", type: 2, light: false},
-                    {name: "Object Position", tag: "ObjectPosition", alttag: "ObjPos", type: 2, light: false},
-                    {name: "Normals", tag: "Normals", alttag: "Norm", type: 2, light: false},
-                    {name: "Bump Normals", tag: "BumpNormals", alttag: "BumpNorm", type: 2, light: false},
-                    {name: "Object Bump Normals", tag: "ObjectBumpNormals", alttag: "ObjNorm", type: 2, light: false},
-                    {name: "Depth", tag: "Z", alttag: "Depth", type: 2, light: false},
-                    {name: "Shadows", tag: "Shadows", alttag: "Shadow", type: 2, light: false},
-                    {name: "Motion Vectors", tag: "MotionVectors", alttag: "MV", type: 2, light: false},
-                    {name: "Puzzle Matte", tag: "PuzzleMatte", alttag: "Puzzle", type: 2, light: false},
-                    {name: "Ambient Occusion", tag: "AO", alttag: "Occlusion", type: 3, light: false}]
-
-
-    var passType =  ["Standard Shading AOV",
+    var passType = ["Standard Shading AOV",
                     "Raw Shading AOV",
                     "Utility AOV",
                     "Deprecated AOV"];
 
-    var sequenceData = [], baseName = null, homeFolder = null;
+    var ruleNames = ["Redshift C4D",
+                    "Redshift Houdini",
+                    "Octane C4D",
+                    "Octane Houdini"]
+
+    if (Pass_port.lastRules >= ruleNames.length) Pass_port.lastRules = 0;
+
+    var sequenceData = [];
+    var passList = getRules(Pass_port.lastRules);
+    var baseName = null, homeFolder = null, myFolder, seqData;
+
+
+
+    function buildUI(thisObj){
+    
+        
+        // PALETTE
+        var palette = (thisObj instanceof Panel) ? thisObj : new Window("palette", Pass_port.scriptName + " v " + Pass_port.version, undefined, {resizeable: true});    
+
+        if (palette !== null)
+        {
+            
+            // palette continues
+        
+            palette.orientation = "column"; 
+            palette.alignChildren = ["center","top"]; 
+            palette.spacing = 10; 
+            palette.margins = 16; 
+
+            // GRP1
+
+            var grp1 = palette.add("group", undefined, {name: "grp1"}); 
+            grp1.orientation = "row"; 
+            grp1.alignChildren = ["left","center"]; 
+            grp1.spacing = 10; 
+            grp1.margins = 0; 
+            grp1.alignment = ["left","top"]; 
+
+            var txtRules = grp1.add("statictext", undefined, undefined, {name: "txtRules"}); 
+            txtRules.helpTip = "Current set of rules. Supports Redshift C4D only by now"; 
+            txtRules.text = "Rules"; 
+            txtRules.justify = "right"; 
+
+            var lstRules_array = ruleNames; 
+            var lstRules = grp1.add("dropdownlist", undefined, undefined, {name: "lstRules", items: lstRules_array}); 
+            lstRules.enabled = false; 
+            lstRules.helpTip = "Current set of rules. Supports Redshift C4D only by now"; 
+            lstRules.selection = Pass_port.lastRules; 
+            lstRules.preferredSize.width = 250; 
+
+            // GRP2
+
+            var grp2 = palette.add("group", undefined, {name: "grp2"}); 
+            grp2.orientation = "row"; 
+            grp2.alignChildren = ["left","center"]; 
+            grp2.spacing = 10; 
+            grp2.margins = 0; 
+            grp2.alignment = ["left","center"]; 
+
+            var txtSeparator = grp2.add("statictext", undefined, undefined, {name: "txtSeparator"}); 
+            txtSeparator.helpTip = "Pass name parsing separator"; 
+            txtSeparator.text = "Separator"; 
+
+            var fldSeparator = grp2.add('edittext {properties: {name: "fldSeparator"}}'); 
+            fldSeparator.helpTip = "Pass name parsing separator"; 
+            fldSeparator.text = Pass_port.AOVtag; 
+            fldSeparator.preferredSize.width = 80;
+
+            var txtFPS = grp2.add("statictext", undefined, undefined, {name: "txtFPS"}); 
+            txtFPS.text = "FPS"; 
+            txtFPS.justify = "right"; 
+
+            var fldFPS = grp2.add('edittext {properties: {name: "fldFPS"}}'); 
+            fldFPS.text = Pass_port.frameRate; 
+            fldFPS.preferredSize.width = 60;
+
+            var chkAutocomp = grp2.add("checkbox", undefined, undefined, {name: "chkAutocomp"}); 
+            chkAutocomp.helpTip = "Sort footage in compositions"; 
+            chkAutocomp.text = "Autocomp"; 
+            chkAutocomp.alignment = ["left","center"]; 
+            chkAutocomp.value = Pass_port.autoComp;
+
+            // div 1
+
+            var div1 = palette.add("panel", undefined, undefined, {name: "div1"}); 
+            div1.alignment = "fill"; 
+
+            // GRP3
+
+            var grp3 = palette.add("group", undefined, {name: "grp3"}); 
+            grp3.orientation = "row"; 
+            grp3.alignChildren = ["left","center"]; 
+            grp3.spacing = 10; 
+            grp3.margins = 0; 
+
+            var txtPath = grp3.add("statictext", undefined, undefined, {name: "txtPath"}); 
+            txtPath.helpTip = "Path to renderpass files"; 
+            txtPath.text = "Path"; 
+
+            var fldPath =  grp3.add('edittext {properties: {name: "fldPath"}}'); 
+            fldPath.helpTip = "Path to renderpass files";
+            fldPath.preferredSize.width = 250;
+            fldPath.text = Pass_port.lastPath;
+
+            var btnBrowse = grp3.add("button", undefined, undefined, {name: "brtnBrowse"}); 
+            btnBrowse.text = "Browse"; 
+            btnBrowse.helpTip = "Browse to a folder to analyze";
+
+            // GRP4
+
+            var grp4 = palette.add("group", undefined, {name: "grp4"}); 
+            grp4.orientation = "row"; 
+            grp4.alignChildren = ["left","center"]; 
+            grp4.spacing = 10; 
+            grp4.margins = 0; 
+            grp4.alignment = ["left","top"]; 
+
+            var txtBaseName = grp4.add("statictext", undefined, undefined, {name: "txtBaseName"}); 
+            txtBaseName.text = "Basename"; 
+            txtBaseName.helpTip = "Basename is a shared name, stripped of all attributes";
+
+            var fldBaseName = grp4.add('edittext {properties: {name: "fldBaseName"}}'); 
+            fldBaseName.preferredSize.width = 223; 
+
+            var btnPort = grp4.add("button", undefined, undefined, {name: "fldPort"}); 
+            btnPort.text = "Port"; 
+            btnPort.helpTip = "Only enabled if a valid basename had been acquired";
+            //btnPort.preferredSize.width = 300; 
+            btnPort.enabled = false;
+
+            // div 2
+
+            var div2 = palette.add("panel", undefined, undefined, {name: "div2"}); 
+            div2.alignment = "fill"; 
+
+            // GRP5
+
+            var grp5 = palette.add("group", undefined, {name: "grp5"}); 
+            grp5.orientation = "row"; 
+            grp5.alignChildren = ["left","center"]; 
+            grp5.spacing = 10; 
+            grp5.margins = 0; 
+
+            // GRP6
+
+            var grp6 = palette.add("group", undefined, {name: "grp6"}); 
+            grp6.orientation = "row"; 
+            grp6.alignChildren = ["left","center"]; 
+            grp6.spacing = 10; 
+            grp6.margins = 0; 
+            grp6.alignment = ["left","top"]; 
+
+            var txtImported = grp6.add("statictext", undefined, undefined, {name: "txtImported"}); 
+            txtImported.text = "Imported"; 
+            txtImported.justify = "right"; 
+            txtImported.helpTip = "Succesfully imported and classified sequences number";
+
+            var fldImported = grp6.add('edittext {properties: {name: "fldImported"}}'); 
+            fldImported.text = "0";
+            fldImported.preferredSize.width = 40; 
+            fldImported.helpTip = "Succesfully imported and classified sequences number";
+            fldImported.enabled = false;
+
+            var txtSkipped = grp6.add("statictext", undefined, undefined, {name: "txtSkipped"}); 
+            txtSkipped.text = "Skipped"; 
+            txtSkipped.justify = "right";
+            txtSkipped.helpTip = "Skipped sequences";
+
+            var fldSkipped = grp6.add('edittext {properties: {name: "fldSkipped"}}'); 
+            fldSkipped.text = "0"; 
+            fldSkipped.preferredSize.width = 40;
+            fldSkipped.helpTip = "Skipped sequences";
+            fldSkipped.enabled = false;
+
+            var txtComps = grp6.add("statictext", undefined, undefined, {name: "txtComps"}); 
+            txtComps.text = "Comps"; 
+            txtComps.justify = "right"; 
+
+            var fldComps = grp6.add('edittext {properties: {name: "fldComps"}}'); 
+            fldComps.text = "0"; 
+            fldComps.preferredSize.width = 40;
+            fldComps.enabled = false;
+
+
+            palette.layout.layout(true);
+            palette.layout.resize();
+            palette.onResizing = palette.onResize = function () {this.layout.resize();}
+
+
+            fldFPS.onChange = function() {
+
+                Pass_port.FPS = fldFPS.text;
+                saveSettings("frameRate", Pass_port.FPS);
+
+            }
+
+            fldSeparator.onChange = function() {
+
+                Pass_port.AOVtag = fldSeparator.text;
+                saveSettings("frameRate", Pass_port.AOVtag);
+
+            }
+
+
+            chkAutocomp.onChange = function() {
+
+                Pass_port.autoComp = chkAutocomp.value;
+                saveSettings("frameRate", Pass_port.autoComp);
+
+            }
+
+
+            btnBrowse.onClick = function() { 
+
+                var cFolder;
+
+                if (Pass_port.lastPath != null) {
+
+                    cFolder = new Folder(Pass_port.lastPath)
+                    LogIt("Last used path detected: " + Pass_port.lastPath , 1);
+
+                } else if (app.project.file != null) {
+
+                    cFolder = new Folder(app.project.file.path)
+                    LogIt("Project path detected: " + app.project.file.path , 1);
+
+                } 
+            
+                if (!cFolder instanceof File) { 
+                 
+                    cFolder = new Folder;
+                    LogIt("The path was not found and is reset" , 1);
+                
+                }
+                LogIt("Browsing to: " + cFolder.fsName , 1);
+
+
+                myFolder = cFolder.selectDlg("Select the renderpass folder")
+
+                if (myFolder != null) {
+                    
+                    btnBrowse.enabled = false;
+                    btnPort.enabled = false;
+                    fldBaseName.enabled = false;
+
+                    getBaseName(myFolder);
+                    
+                    btnBrowse.enabled = true;
+                    fldBaseName.enabled = true;
+                    fldPath.text = myFolder.fsName.replace("\\null", "");
+
+                    if (baseName != null) {
+                    
+                        fldBaseName.text = baseName;
+                        btnPort.enabled = true;
+                        Pass_port.lastPath = fldPath.text;
+                        saveSettings("lastPath", Pass_port.lastPath);
+
+                    } else {
+
+                        fldBaseName.text = "";
+                        btnPort.enabled = false;
+
+                    }
+
+                } else {
+
+                    btnPort.enabled = false;
+        
+                } // folder check
+
+            } // browse onclick
+
+
+            btnPort.onClick = function() { 
+
+                baseName = fldBaseName.text;
+
+                if (baseName != null) {
+
+                    btnBrowse.enabled = false;
+                    btnPort.enabled = false;
+                    fldBaseName.enabled = false;
+
+                    seqData = GetData(myFolder); 
+
+                    btnBrowse.enabled = true;
+                    fldBaseName.enabled = true;
+                    btnPort.enabled = true;
+        
+                    if ((seqData) && (seqData.length > 0)) {
+        
+                        var filesImported = importData(seqData, 25);
+                        LogIt("   " + filesImported + " imported", 1);
+        
+                        if (filesImported > 0) {
+                            var compsCreated = autoComp(seqData)
+                        }
+        
+                    }
+                
+                } //basename check
+        
+                fldImported.text = filesImported;
+                fldSkipped.text = seqData.length - filesImported;
+                fldComps.text = compsCreated;
+                LogIt((seqData) ? ("Ported! " + seqData.length + " sequences found, " + filesImported + " imported, " + compsCreated + " new comps created") : "Nothing ported!" , 1);
+
+            } // port onclick
+
+            return palette
+
+        } else {
+
+            logIt("Cannot create palette window", 1)
+
+        } // if palette
+
+
+    } // buildUI()
+
+
+
+    function getRules(n) {
+
+        switch(n) {
+
+            case 0: 
+                // RS C4D
+                return [{name: "Beauty", tag: "Beauty", alttag: "Beauty", type: 0, light: false},
+                        {name: "Diffuse Lighting", tag: "Diffuse", alttag: "Diff", type: 0, light: true}, 
+                        {name: "Specular Lighting", tag: "Speculars", alttag: "Specs", type: 0, light: true},
+                        {name: "Reflections", tag: "Reflections", alttag: "Reflect", type: 0, light: true},
+                        {name: "Refractions", tag: "Refractions", alttag: "Refract", type: 0, light: true},
+                        {name: "Subsurface Scatter", tag: "SSS", alttag: "Subsurface", type: 0, light: true},
+                        {name: "Caustics", tag: "Caustics", alttag: "Caust", type: 0, light: true},
+                        {name: "Emission", tag: "Emission", alttag: "Emissive", type: 0, light: true},
+                        {name: "Global Illumination", tag: "GI", alttag: "Global", type: 0, light: true},
+                        {name: "Volume Lighting", tag: "VolumeLighting", alttag: "VolLight", type: 0, light: true},
+                        {name: "Volume Fog Emission", tag: "VolumeFogEmission", alttag: "VolFogEm", type: 0, light: false},
+                        {name: "Volume Fog Tint", tag: "VolumeFogTint", alttag: "VolFogTint", type: 0, light: false},
+                        {name: "Background", tag: "Background", alttag: "BG", type: 0, light: false},
+                        {name: "Diffuse Filter", tag: "DiffuseFilter", alttag: "DiffFlt", type: 1, light: true},
+                        {name: "Diffuse Lighting Raw", tag: "DiffuseLightingRaw", alttag: "DiffRaw", type: 1, light: true},
+                        {name: "Reflection Filter", tag: "ReflectionFilter", alttag: "ReflFlt", type: 1, light: true},
+                        {name: "Reflection Raw", tag: "ReflectionRaw", alttag: "ReflRaw", type: 1, light: true},
+                        {name: "Refraction Filter", tag: "RefractionFilter", alttag: "RefrFlt", type: 1, light: true},
+                        {name: "Refraction Raw", tag: "RefractionRaw", alttag: "RefrRaw", type: 1, light: true},
+                        {name: "Subscatter Surface Raw", tag: "SubscatterSurfaceRaw", alttag: "SSSRaw", type: 1, light: true},
+                        {name: "Global Illumination Raw", tag: "GIRaw", alttag: "GlobalRaw", type: 1, light: true},
+                        {name: "Caustics Raw", tag: "CausticsRaw", alttag: "CaustRaw", type: 1, light: true},
+                        {name: "Translucency Filter", tag: "TransTint", alttag: "TransFlt", type: 1, light: false},
+                        {name: "Transclucency Lighting Raw", tag: "TotalTransLightingRaw", alttag: "TransRaw", type: 1, light: false},
+                        {name: "Translucency GI Raw", tag: "TranslucencyGIRaw", alttag: "TransGIRaw", type: 1, light: false},
+                        {name: "World Position", tag: "WorldPosition", alttag: "WorldPos", type: 2, light: false},
+                        {name: "Object Position", tag: "ObjectPosition", alttag: "ObjPos", type: 2, light: false},
+                        {name: "Normals", tag: "Normals", alttag: "Norm", type: 2, light: false},
+                        {name: "Bump Normals", tag: "BumpNormals", alttag: "BumpNorm", type: 2, light: false},
+                        {name: "Object Bump Normals", tag: "ObjectBumpNormals", alttag: "ObjNorm", type: 2, light: false},
+                        {name: "Depth", tag: "Z", alttag: "Depth", type: 2, light: false},
+                        {name: "Shadows", tag: "Shadows", alttag: "Shadow", type: 2, light: false},
+                        {name: "Motion Vectors", tag: "MotionVectors", alttag: "MV", type: 2, light: false},
+                        {name: "Puzzle Matte", tag: "PuzzleMatte", alttag: "Puzzle", type: 2, light: false},
+                        {name: "Ambient Occusion", tag: "AO", alttag: "Occlusion", type: 3, light: false}];
+                break;
+
+            case 1:
+                return null;
+                break;
+
+            case 2:
+                return null;
+                break;
+        
+        }
+                
+    } // getRules()
+
+
+
+    function getSettings (sectionName) {
+        
+        if (!app.settings.haveSetting(Pass_port.scriptName, sectionName)) return null;
+            
+        var savedSetting = app.settings.getSetting(Pass_port.scriptName, sectionName);
+            
+        if (savedSetting == "false") {
+            savedSetting = false;
+        } else if (savedSetting == "true") {
+            savedSetting = true;
+        } else {
+            savedSetting; 
+        }
+                          
+        return savedSetting;
+        
+    } // getSettings()
+
+
+
+    function saveSettings (section, value) { 
+        
+        app.settings.saveSetting(Pass_port.scriptName, section, value)
+    
+    }
 
 
 
@@ -77,11 +449,13 @@
 
             alert(err.toString())
         }
-    }
+    } // logIt()
+
+
 
     function FilterFilesExt(arg) {
 
-        return arg.name.search("(exr|tif|tiff|jpg|jpeg)$")
+        return arg.name.search("(exr|tif|tiff|jpg|jpeg|png)$")
     }
 
 
@@ -132,6 +506,7 @@
     } // getfiles()
 
 
+
     function getBaseName(sourceFolder) {
 
 
@@ -172,7 +547,7 @@
                 }
             } // for
         }// if theres files
-    } // getBasename
+    } // getBasename()
 
 
 
@@ -229,7 +604,7 @@
 
                     sequenceData.push({fileid: uniSequences[s], file: sourceFiles[uniSequences[s]], passid: 0, passname: passList[0].name, lightid: -1, lightname: 0});
                     cFlag = true; cCount++;
-                    LogIt(sourceFiles[uniSequences[s]].name + " is " + passList[0].name, 1);
+                    LogIt("   " + sourceFiles[uniSequences[s]].name + " is " + passList[0].name, 1);
 
                 } else { 
 
@@ -247,11 +622,11 @@
 
                 if (!cFlag) {
 
-                    LogIt(sourceFiles[uniSequences[s]].name + " was not classified. Skipping!", 1)
+                    LogIt("    Unable to classify " + sourceFiles[uniSequences[s]].name + ". Skipping!", 1)
                 }
             }
 
-            LogIt(cCount + " of " + sequenceData.length + " passes were classified", 1);
+            LogIt("   " + cCount + " of " + sequenceData.length + " passes were classified", 1);
 
             
             // 2 Ligtpass groups processing, if any
@@ -287,12 +662,12 @@
                 }
             }
 
-            LogIt(lightGroups.length + " lightgroups detected", 1);
+            LogIt("   " + lightGroups.length + " lightgroups detected", 1);
 
         } // if baseName
         
         return sequenceData    
-    } // GetData
+    } // GetData()
     
     
 
@@ -352,7 +727,7 @@
 
         return iCount 
 
-    } // importData
+    } // importData()
 
 
 
@@ -406,83 +781,28 @@
 
         } // if current project and data
 
-    }
+    } // autoComp()
 
+ 
+ 
+    ////////////////// main ////////////////
 
-    function buildUI(thisObj){
-    
-        
-        // PALETTE
-        var palette = (thisObj instanceof Panel) ? thisObj : new Window("palette", Pass_port.scriptName + " v" + Pass_port.version, undefined, {resizeable: true});    
-
-        if (palette !== null)
-        {
-            
-        }
-
-
-    } // buildUI
-
-
-    ////////////////// main
     var stDate = new Date();
-    LogIt("\n--- New run inititated at " + stDate.toLocaleString() + " ---\n", 0);
+    LogIt("\n" + Pass_port.scriptName + " v." + Pass_port.version + " initialized at " + stDate.toLocaleString() + ", current project: " + app.project.name + "\n" , 0);
 
-    // var trToolPal = buildUI(thisObj);
+    var trToolPal = buildUI(thisObj);
 
-    // if (trToolPal !== null)
-    //         {
-    //             if (trToolPal instanceof Window)
-    //             {
-    //                 // Show the palette
-    //                 trToolPal.center();
-    //                 trToolPal.show();
-    //             }
-    //             else
-    //                 trToolPal.layout.layout(true);
-    //         }
-
-
-    //var myFolder = "D:\\keerah\\PROJECTS\\00\\ForestZoom1\\"; 
-
-    
-    if (app.project.file instanceof File) {
-
-        var prjFolder = new Folder(app.project.file.path);
-        var myFolder = prjFolder.selectDlg("Select the renderpass folder")
-    } else {
-
-        var myFolder = Folder.selectDialog("Select the renderpass folder")
+    if (trToolPal !== null)
+    {
+        if (trToolPal instanceof Window)
+        {
+            // Show the palette
+            trToolPal.center();
+            trToolPal.show();
+        }
+        else
+            trToolPal.layout.layout(true);
     }
-
-    if (myFolder != null) {
-
-        getBaseName(myFolder);
-
-        if (baseName != null) {
-
-            var seqData = GetData(myFolder); 
-
-            if ((seqData) && (seqData.length > 0)) {
-
-                var filesImported = importData(seqData, 25);
-                LogIt(filesImported + " imported", 1);
-
-                if (filesImported > 0) {
-
-                    var compsCreated = autoComp(seqData)
-                }
-
-            } else {
             
-                //
-            }
-        
-        } //basename check
 
-    } // folder check
-
-    LogIt((seqData) ? (seqData.length + " sequences found, " + filesImported + " imported, " + compsCreated + " new comps created") : "Nothing's done" , 1);
-    stDate = new Date();
-    LogIt("--- Finished at " + stDate.toLocaleString() + "---", 0);
 })(this);
