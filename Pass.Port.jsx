@@ -1,11 +1,15 @@
-﻿// Pass_port by Keerah
-// prototype ver 0.33
+﻿// Pass_port 
+// AFter Effects script that imports your render passes
+// and builds full beauty composition 
+// ver 0.331
+// Copyright (c) 2020-2021 Keerah. All rights reserved
+// More info keerah.com
 
 (function Pass_port(thisObj) {
 
     var Pass_port = new Object;
         Pass_port.scriptName = "Pass.port";
-        Pass_port.version = "0.33";
+        Pass_port.version = "0.331";
         Pass_port.AOVtag = (getSettings("AOVtag") != null) ? getSettings("AOVtag") : "_AOV_";
         Pass_port.frameRate = (getSettings("frameRate") != null) ? getSettings("frameRate") : 30;
         Pass_port.lastRules = (getSettings("lastRules") != null) ? getSettings("lastRules") : 0;
@@ -248,7 +252,11 @@
 
                 } 
             
-                if (!cFolder instanceof File) { 
+                if (cFolder instanceof File) { 
+
+                    //
+
+                } else {
                  
                     cFolder = new Folder;
                     LogIt("The path was not found and is reset" , 1);
