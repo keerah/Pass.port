@@ -10,12 +10,13 @@
 * For precise control Pass.port creates a text log file with everything it has found and done named pass.port_log.txt next to your AE project file or to your desktop if your project is not saved
 * Creates 2 undo groups, one for the Footage Import and another one for AutoComp stage, so you can undo by one
 
-## What it does not:
+## What it does not (yet):
 * Doesn't rebuild your composition by the book yet, but its 100% next feature
 * Doesn't support multilayered exrs by now
 * The parsing is built for the default renderpass naming of C4D Redshift version only (with some variations), other Rule sets are on the list
 * Tested on Windows only, cannot promise if it'll work on Mac
 * Doesn't change any of your files and does not access the internet
+* Unfortunately it will never be able to make you a coffee
 
 You can run it as usual with the Run Script menu, or place it into ...Support Files\Scripts\ScriptUI Panels to be able to dock it into your AE interface. It is a free script, but please do not sell it and do not include it in any products free or paid.
 
@@ -27,3 +28,6 @@ A small universal tip for getting a consistent basename for your main render and
 `for RS AOVs: $take_AOV_`
 
 Pass.port will recognise this naming very gladly
+
+## Feedback
+If you're actively using Pass.Port and have some feedback/issues please keep in touch with the dedicated discord channel at https://discord.gg/5WhSsE2T
