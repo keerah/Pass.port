@@ -1,4 +1,6 @@
 # Pass.Port
+![menu img](https://i.imgur.com/zzlOsnc.png "Pass.Port interface")
+
  What it does:
 * After clicking BROWSE it analyses the files in the folder you browsed to and finds their shared name (stripped off all attributes), it's called Basename
 * Once its done you can push the PORT button. It will import all found sequences, analyse them for a renderpass type (this is for future feature of auto compositing by the book) and for Light Groups. 
