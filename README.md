@@ -1,4 +1,5 @@
 # Pass.Port
+**Pass.Port** is a scripted tool that comes to the rescue when you need to import a bunch of renderpasses (or just one) into **Adobe After Effects** and saves your time on compositing
 ![menu img](https://i.imgur.com/zzlOsnc.png "Pass.Port interface")
 
  ## What it does:
@@ -29,5 +30,7 @@ Or with the **$camera** token in the same manner. **Pass.port** will recognise t
 
 ## Usage and Feedback
 You can run **Pass.Port** as usual using the **Run Script menu**, or place it into **...Support Files\Scripts\ScriptUI Panels** to be able to dock it into your AE interface
+
 It is a free script, but please do not sell it and do not include it in any products free or paid
+
 If you're actively using **Pass.Port** and have some feedback/issues please keep in touch with the dedicated discord channel at https://discord.gg/5WhSsE2T
