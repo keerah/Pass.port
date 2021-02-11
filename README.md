@@ -19,8 +19,8 @@ What it does not:
 
 You can run it as usual with the Run Script menu, or place it into ...Support Files\Scripts\ScriptUI Panels to be able to dock it into your AE interface. It is a free script, but please do not sell it and do not include it in any products free or paid.
 
-Naming your passes:
+Naming the renderpases:
 A small universal tip for getting a consistent basename for your main render and passes with takes in c4d:
-`for main output: .../$take/$take 
-for RS AOVs: $take_AOV_`
+`for main output: .../$take/$take`
+`for RS AOVs: $take_AOV_`
 Pass.port will recognise this naming very gladly
