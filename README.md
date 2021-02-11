@@ -21,6 +21,9 @@ You can run it as usual with the Run Script menu, or place it into ...Support Fi
 
 ## Naming the renderpases:
 A small universal tip for getting a consistent basename for your main render and passes with takes in c4d:
+
 `for main output: .../$take/$take`
+
 `for RS AOVs: $take_AOV_`
+
 Pass.port will recognise this naming very gladly
