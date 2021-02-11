@@ -2,12 +2,12 @@
 ![menu img](https://i.imgur.com/zzlOsnc.png "Pass.Port interface")
 
  ## What it does:
-* After clicking BROWSE it analyses the files in the folder you browsed to and finds their shared name (stripped off of everything after the separator tag), it's called Basename
-* Once its done you can push the PORT button. It will import all found sequences, analyse them for a renderpass type (this is for future feature of auto compositing by the book) and for Light Groups
-* Then if AutoComp enabled, it sortes them into separate Comps corresponding to the detected Light Groups
-* As a result you have all sequences imported and one or a few new comps, all placed into the project folder RS render passes
-* The script saves all your current settings - the separator tag, fps, autocomp checkbox and the last successful folder location between sessions
-* For precise control Pass.port creates a text log file with everything it has found and done named pass.port_log.txt next to your AE project file or to your desktop, if your project is not saved
+* After clicking BROWSE Pass.Port analyses the files in the folder you browsed to and finds their shared name (stripped off of everything after the separator tag), it's called Basename. The one detected will be shown in the Basename field
+* If Pass.Port was able to detect the basename, it will enable the PORT button. Clicking it will import all found sequences, analyse them for a renderpass type (this is for the future feature of auto compositing) and for Light Groups
+* Then if AutoComp enabled, it sorts them into separate Comps corresponding to the detected Light Groups
+* As a result you have all sequences imported and one or a few new comps, all placed into the project folder RS render passes. Pass.port will indicate this int its UI (and in the log file)
+* The script saves all your current settings between the sessions, including the last successful folder
+* Pass.Port creates a text log file with everything it has found and done named pass.port_log.txt next to your AE project file or to your desktop, if your project is not saved
 * Creates 2 undo groups, one for the Footage Import and another one for AutoComp stage, so you can undo by one
 
 ## What it does not (yet):
