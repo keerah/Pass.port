@@ -1,5 +1,6 @@
 # Pass.Port
 **Pass.Port** is a scripted tool that comes to the rescue when you need to import a bunch of renderpasses (or just one) into **Adobe After Effects** and saves your time on compositing
+
 ![menu img](https://i.imgur.com/zzlOsnc.png "Pass.Port interface")
 
  ## What it does:
@@ -19,7 +20,14 @@
 * Doesn't change any of your files and does not access the internet
 * Unfortunately it will never be able to make you a coffee
 
-## Naming the renderpases:
+## Naming the renderpasses:
+
+Example of Pass.Port compatible naming:
+
+![menu img](https://i.imgur.com/jnj5JBs.png "Naming the passes")
+
+The `_` symbol separates tags inside the filename, and the `_AOV_` (this you can change) divides the basename from the following renderpass name and light group name tags (or the frame number if this tag is not present).
+
 A tip for getting a consistent basename for your main render and passes with takes in c4d with tokens:
 
 for main output: `.../$take/$take`
