@@ -14,14 +14,14 @@
 
 ## What it does not (yet):
 * Doesn't rebuild your composition by the book yet, but its 100% next feature
-* Doesn't support multi-layered RXRs by now
+* Doesn't support multi-layered EXRs by now
 * Parsing is built based on the default renderpass naming of C4D Redshift (with some freedom). Other Rule sets are on the list, but as long as you comply to the same rules you can use **Pass.Port** with any other render engine
 * Tested on Windows only, cannot promise if it'll work on Mac yet
 * Doesn't change any of your files and doesn't access the internet
 
 ## Naming the renderpasses:
 
-The default C4D Redshift renderpasses naming system was taken for the reference, so it must work effortlessly for the case
+The default C4D Redshift renderpasses naming system was taken for the reference, so it must work effortlessly for the case. Some alternative passnames (see below) are taken from RS Houdini, so it should also work fine for it
 
 #### An example of Pass.Port compatible naming:
 
@@ -31,7 +31,7 @@ The `_` symbol separates tags inside the filename, and the `_AOV_` (this you can
 
 The **framenumbers must always be at least 4 digits long**
 
-As you can see on the picture above **Pass.Port** supports multiple passes of the same type (PuzzleA, PuzzleB, etc). Just avoid numbers in their names, and the script will handle them well
+As you can see on the picture above **Pass.Port** supports multiple passes of the same type (PuzzleA, PuzzleB, PuzzleNew, etc). Just avoid numbers in their names, and the script will handle them well
 
 #### Built-in renderpass name variations:
 
@@ -74,11 +74,13 @@ MotionVectors | MV
 PuzzleMatte | Puzzle
 AO | Occlusion
 
-#### A tip for consistent basename with C4D takes and tokens:
+#### A tip for consistent basename with C4D:
 
-for main output: `.../$take/$take`, and for RS AOVs: `$take_AOV`
+Use tokens for main output: `.../$take/$take`, and for RS AOVs: `$take_AOV`
 
-Or with the **$camera** token in the same manner. **Pass.port** will recognise this naming very gladly
+Or, main: `.../$camera/$camera`, AOVs: `$camera_AOV`
+
+**Pass.port** will recognise this naming very gladly
 
 ## Usage and Feedback
 You can run **Pass.Port** as usual using **Run Script menu**, or place it into **...Support Files\Scripts\ScriptUI Panels** to be able to dock it into your AE interface
