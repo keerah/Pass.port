@@ -28,13 +28,13 @@ The default C4D Redshift renderpasses naming was taken as the reference, so it m
 
 ![menu img](https://i.imgur.com/jnj5JBs.png "Naming the passes")
 
-The `_` symbol separates tags inside the filename, and the `_AOV_` (this you can change i  the UI) divides the basename from the following renderpass name and lightgroup name tags. If AOV tag is not present Pass.Port will use framenumber instead. The **framenumber must always be at least 4 digits long**
+The `_` symbol separates tags inside the filename, and the `_AOV_` (this you can change in  the UI) divides the basename from the following renderpass name and lightgroup name tags. If `_AOV_` tag is not present Pass.Port will use framenumber instead. The **framenumbers must always be at least 4 digits long**
 
-#### Built in renderpass name variations:
+#### Built-in renderpass name variations:
 
 For each Rule Set you will have one alternative renderpass name. Since there's just one Rule Set yet, you have these options for now:
 
-Default   | Alternative
+Default (RS) | Alternative
 ----------|---------------
 Diffuse | Diff
 Speculars | Spec
@@ -79,7 +79,5 @@ Or with the **$camera** token in the same manner. **Pass.port** will recognise t
 
 ## Usage and Feedback
 You can run **Pass.Port** as usual using the **Run Script menu**, or place it into **...Support Files\Scripts\ScriptUI Panels** to be able to dock it into your AE interface
-
-It is a free script, but please do not sell it and do not include it in any products free or paid
 
 If you're actively using **Pass.Port** and have some feedback/issues please keep in touch with the dedicated discord channel at https://discord.gg/5WhSsE2T
