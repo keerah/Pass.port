@@ -27,7 +27,8 @@ The default C4D Redshift renderpasses naming system was taken for the reference,
 
 ![menu img](https://i.imgur.com/jnj5JBs.png "Naming the passes")
 
-The `_` symbol separates tags inside the filename, and the `_AOV_` (this you can change in the UI) divides the basename from the following renderpass name and lightgroup name tags. If `_AOV_` tag is not present **Pass.Port** will use entire name without framenumber.
+The **Basename** for these sequences is **ForestFront1_Front** (all symbols before AOV tag or before the framenumber)
+After the AOV tag the `_` symbol separates the renderpass and lightgroup tags
 
 The **framenumbers must always be at least 4 digits long**
 
