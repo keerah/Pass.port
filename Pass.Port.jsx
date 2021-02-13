@@ -1,8 +1,7 @@
-﻿// Pass_port 
+﻿// Pass_port ver 0.331
 // AFter Effects script that imports your render passes
-// and builds full beauty composition 
-// ver 0.331
-// Copyright (c) 2020-2021 Keerah. All rights reserved
+// and builds full beauty composition (forthcoming feature)
+// (c) 2020-2021 Keerah. All rights reserved
 // More info keerah.com
 
 (function Pass_port(thisObj) {
@@ -15,7 +14,7 @@
         Pass_port.lastRules = (getSettings("lastRules") != null) ? getSettings("lastRules") : 0;
         Pass_port.lastPath = (getSettings("lastPath") != null) ? getSettings("lastPath") : null;
         Pass_port.autoComp = (getSettings("autoComp") != null) ? getSettings("autoComp") : true;
-        Pass_port.homeFolderName = (getSettings("homeFolderName") != null) ? getSettings("homeFolderName") : "RS render passes";
+        Pass_port.homeFolderName = (getSettings("homeFolderName") != null) ? getSettings("homeFolderName") : "Pass.Port ";
         Pass_port.logFile = (getSettings("logFile") != null) ? getSettings("logFile") : "pass.port_log.txt";
         Pass_port.logFile = (app.project.file != null) ? app.project.file.path + "\\" + Pass_port.logFile : Folder.desktop.fsName + "\\" + Pass_port.logFile;
 
@@ -243,12 +242,12 @@
                 if (Pass_port.lastPath != null) {
 
                     cFolder = new Folder(Pass_port.lastPath)
-                    LogIt("Last used path detected: " + Pass_port.lastPath , 1);
+                    logIt("Last used path detected: " + Pass_port.lastPath , 1);
 
                 } else if (app.project.file != null) {
 
                     cFolder = new Folder(app.project.file.path)
-                    LogIt("Project path detected: " + app.project.file.path , 1);
+                    logIt("Project path detected: " + app.project.file.path , 1);
 
                 } 
             
@@ -259,10 +258,10 @@
                 } else {
                  
                     cFolder = new Folder;
-                    LogIt("The path was not found and is reset" , 1);
+                    logIt("The path was not found and is reset" , 1);
                 
                 }
-                LogIt("Browsing to: " + cFolder.fsName , 1);
+                logIt("Browsing to: " + cFolder.fsName , 1);
 
 
                 myFolder = cFolder.selectDlg("Select the renderpass folder")
@@ -321,7 +320,7 @@
                     if ((seqData) && (seqData.length > 0)) {
         
                         var filesImported = importData(seqData, 25);
-                        LogIt("   " + filesImported + " imported", 1);
+                        logIt("   " + filesImported + " imported", 1);
         
                         if (filesImported > 0) {
                             var compsCreated = autoComp(seqData)
@@ -334,7 +333,7 @@
                 fldImported.text = filesImported;
                 fldSkipped.text = seqData.length - filesImported;
                 fldComps.text = compsCreated;
-                LogIt((seqData) ? ("Ported! " + seqData.length + " sequences found, " + filesImported + " imported, " + compsCreated + " new comps created") : "Nothing ported!" , 1);
+                logIt((seqData) ? ("Ported! " + seqData.length + " sequences found, " + filesImported + " imported, " + compsCreated + " new comps created") : "Nothing ported!" , 1);
 
             } // port onclick
 
@@ -436,7 +435,7 @@
 
 
 
-    function LogIt(logStr, logTime){
+    function logIt(logStr, logTime){
 
         try {
 
@@ -485,12 +484,12 @@
 
             try { 
 
-                LogIt("The folder " + sourceFolder.fsName + " assigned", 1);
+                logIt("The folder " + sourceFolder.fsName + " assigned", 1);
                 myFiles = sourceFolder.getFiles(FilterFilesExt).sort();
                 
             } catch(err) {
 
-                LogIt("Some filesystem error: " + sourceFolder.error, 1);
+                logIt("Some filesystem error: " + sourceFolder.error, 1);
                 alert(err.toString());
                 return 0
             }   
@@ -502,13 +501,13 @@
 
         if (myFiles.length > 0) {
         
-            LogIt("Total Files: " + myFiles.length, 1);
+            logIt("Total Files: " + myFiles.length, 1);
             return myFiles
 
         } else {
 
             alert("There were no sequence files found in the folder", Pass_port.scriptName);
-            LogIt("No sequences found!");
+            logIt("No sequences found!");
             return 0
         } // if myFiles has files
     } // getfiles()
@@ -531,7 +530,7 @@
                 if (aovTagPos != -1) {
 
                     baseName = sourceFiles[i].name.substring(0, aovTagPos);
-                    LogIt("baseName from no AOV tag filename: " + baseName, 1);
+                    logIt("baseName from no AOV tag filename: " + baseName, 1);
                 } 
 
                 counterPos = sourceFiles[i].name.search("\\d{4,}"); // the counter present
@@ -539,13 +538,13 @@
 
                     if (baseName != null) { // and AOVtag was found too
 
-                        LogIt("No AOV tag in this filename. This must be the main beauty pass", 1);
+                        logIt("No AOV tag in this filename. This must be the main beauty pass", 1);
                         break
 
                     } else { // no AOV tag found, getting the new baseName or overwriting (should be the same)
 
                         baseName = sourceFiles[i].name.substring(0, counterPos);
-                        LogIt("The Basename from AOV tagged filename: \"" + baseName + "\"", 1);
+                        logIt("The Basename from AOV tagged filename: \"" + baseName + "\"", 1);
                         break
                     }
 
@@ -567,7 +566,7 @@
 
             // 1 collecting the sequences
             // 1a strip filenames to pass tags storing to the equal array
-            LogIt("Now enumerating the sequences...", 1);
+            logIt("Now enumerating the sequences...", 1);
             var strippedNames = [], afterNamePos = baseName.length, aovPos;
 
             for (var i = 0; i < sourceFiles.length; i++) {
@@ -584,21 +583,21 @@
             // 1b selecting each new stripped name and adding to the list of uniques
             var uniSequences = [];
             uniSequences.push(0);
-            LogIt("   Fisrt sequence added: " + ((strippedNames[0] == "") ? "Beauty" : strippedNames[0]), 1);
+            logIt("   Fisrt sequence added: " + ((strippedNames[0] == "") ? "Beauty" : strippedNames[0]), 1);
 
             for (var f = 1; f < sourceFiles.length; f++) {
         
                 if (strippedNames[f-1] != strippedNames[f]) {
                     uniSequences.push(f);
-                    LogIt("   New sequence found and added: " + strippedNames[f], 1);
+                    logIt("   New sequence found and added: " + strippedNames[f], 1);
                     f++;
                 }
             }
 
-            LogIt("Total unique sequences found: " + uniSequences.length, 1);
+            logIt("Total unique sequences found: " + uniSequences.length, 1);
 
             // 1c classifing the sequences
-            LogIt("Now classifying the footage...", 1);
+            logIt("Now classifying the footage...", 1);
 
             var cFlag = false; cCount = 0;
 
@@ -612,7 +611,7 @@
 
                     sequenceData.push({fileid: uniSequences[s], file: sourceFiles[uniSequences[s]], passid: 0, passname: passList[0].name, lightid: -1, lightname: 0});
                     cFlag = true; cCount++;
-                    LogIt("   " + sourceFiles[uniSequences[s]].name + " is " + passList[0].name, 1);
+                    logIt("   " + sourceFiles[uniSequences[s]].name + " is " + passList[0].name, 1);
 
                 } else { 
 
@@ -622,7 +621,7 @@
 
                             sequenceData.push({fileid: uniSequences[s], file: sourceFiles[uniSequences[s]], passid: p, passname: passList[p].name, lightid: -1, lightname: 0});
                             cFlag = true; cCount++;
-                            LogIt("   " + sourceFiles[uniSequences[s]].name + " is " + passList[p].name, 1);
+                            logIt("   " + sourceFiles[uniSequences[s]].name + " is " + passList[p].name, 1);
                             break;
                         }
                     }
@@ -630,16 +629,16 @@
 
                 if (!cFlag) {
 
-                    LogIt("    Unable to classify " + sourceFiles[uniSequences[s]].name + ". Skipping!", 1)
+                    logIt("    Unable to classify " + sourceFiles[uniSequences[s]].name + ". Skipping!", 1)
                 }
             }
 
-            LogIt("   " + cCount + " of " + sequenceData.length + " passes were classified", 1);
+            logIt("   " + cCount + " of " + sequenceData.length + " passes were classified", 1);
 
             
             // 2 Ligtpass groups processing, if any
 
-            LogIt("Now searching for light groups...", 1);
+            logIt("Now searching for light groups...", 1);
 
             var lightGroups = [], lp, sp;
 
@@ -666,11 +665,11 @@
                         sequenceData[s].lightid = sp;
                     }
                     sequenceData[s].lightname = lp[1];
-                    LogIt("   "+ strippedNames[sequenceData[s].fileid] + " is in lightgroup " + lp[1] + " [" + sequenceData[s].lightid + "]", 1);
+                    logIt("   "+ strippedNames[sequenceData[s].fileid] + " is in lightgroup " + lp[1] + " [" + sequenceData[s].lightid + "]", 1);
                 }
             }
 
-            LogIt("   " + lightGroups.length + " lightgroups detected", 1);
+            logIt("   " + lightGroups.length + " lightgroups detected", 1);
 
         } // if baseName
         
@@ -687,7 +686,7 @@
         if ((currentProj) && (sequenceData.length > 0)) {
         
             app.beginUndoGroup(Pass_port.scriptName + " import");
-            LogIt("Now importing footage...", 1);
+            logIt("Now importing footage...", 1);
             
             var importOptions, importedFile;
             var importHome = currentProj.rootFolder, lightFolders=[];
@@ -696,7 +695,7 @@
                 importHome = (currentProj.activeItem.typeName == "Folder") ? currentProj.activeItem : currentProj.rootFolder
             }
 
-            homeFolder = currentProj.items.addFolder(Pass_port.homeFolderName);
+            homeFolder = currentProj.items.addFolder(Pass_port.homeFolderName + " - " + baseName);
             homeFolder.parentFolder = importHome;
             var setFolder = currentProj.items.addFolder(baseName + " Footage");
             setFolder.parentFolder = homeFolder;
@@ -745,7 +744,7 @@
 
         if ((currentProj) && (sequenceData.length > 0) && (homeFolder != null)) {
 
-            LogIt("Now compositing...", 1);
+            logIt("Now compositing...", 1);
             app.beginUndoGroup(Pass_port.scriptName + " Autocomp");
             var tItem = sequenceData[0].footage, tLayer;
             compFolder = currentProj.items.addFolder(baseName + " Auto Compositions");
@@ -796,7 +795,7 @@
     ////////////////// main ////////////////
 
     var stDate = new Date();
-    LogIt("\n" + Pass_port.scriptName + " v." + Pass_port.version + " initialized at " + stDate.toLocaleString() + ", current project: " + app.project.name + "\n" , 0);
+    logIt("\n" + Pass_port.scriptName + " v." + Pass_port.version + " initialized at " + stDate.toLocaleString() + ", current project: " + app.project.name + "\n" , 0);
 
     var trToolPal = buildUI(thisObj);
 

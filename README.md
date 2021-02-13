@@ -30,7 +30,7 @@ The default C4D Redshift renderpasses naming system was taken for the reference,
 The **Basename** for these sequences is **ForestFront1_Front** (all symbols before AOV tag or before the framenumber)
 After the AOV tag the `_` symbol separates the renderpass and lightgroup tags
 
-The **framenumbers must always be at least 4 digits long**
+**Framenumbers must always be at least 4 digits long**
 
 As you can see on the picture above **Pass.Port** supports multiple passes of the same type (PuzzleA, PuzzleB, PuzzleNew, etc). Just avoid numbers in their names, and the script will handle them well
 
@@ -83,7 +83,14 @@ Or, main: `.../$camera/$camera`, AOVs: `$camera_AOV`
 
 **Pass.port** will recognise this naming very gladly
 
-## Usage and Feedback
+## Usage
 You can run **Pass.Port** as usual using **Run Script menu**, or place it into **...Support Files\Scripts\ScriptUI Panels** to be able to dock it into your AE interface
 
-If you're actively using **Pass.Port** and have some feedback/issues please keep in touch using the dedicated discord channel at https://discord.gg/5WhSsE2T
+## Development Roadmap
+
+This is [the way](https://github.com/keerah/Pass.port/discussions/3)
+
+I appreciate your contribution to the development
+here on GitHub in [Issues](https://github.com/keerah/Pass.port/issues) or [Dicussios](https://github.com/keerah/Pass.port/discussions)
+or by donating on [Gumroad](https://gumroad.com/l/PassPort)
+or giving feedback on Pass.Port's [Discord channel](https://discord.gg/5WhSsE2T)
