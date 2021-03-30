@@ -1,4 +1,4 @@
-﻿// Pass_port ver 0.331
+﻿// Pass_port ver 0.333
 // AFter Effects script that imports your render passes
 // and builds full beauty composition (forthcoming feature)
 // (c) 2020-2021 Keerah. All rights reserved
@@ -8,7 +8,7 @@
 
     var Pass_port = new Object;
         Pass_port.scriptName = "Pass.port";
-        Pass_port.version = "0.331";
+        Pass_port.version = "0.333";
         Pass_port.AOVtag = (getSettings("AOVtag") != null) ? getSettings("AOVtag") : "_AOV_";
         Pass_port.frameRate = (getSettings("frameRate") != null) ? getSettings("frameRate") : 30;
         Pass_port.lastRules = (getSettings("lastRules") != null) ? getSettings("lastRules") : 0;

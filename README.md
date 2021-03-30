@@ -7,7 +7,7 @@
 * After clicking the **Browse** button **Pass.Port** analyzes the files in the folder you selected to find their shared name (everything before the `_AOV_` tag, or before the framenumber if the tag is not present), let's name it **Basename**. The one detected will be shown in the Basename field
 * If **Pass.Port** was able to detect the Basename it enables the **Port** button. Click it to import all found sequences and to analyze them for the renderpass type (for the future feature of auto compositing) and for the lightgroups
 * Then if the **AutoComp** is checked it will sort the footage into separate compositions corresponding to the detected lightgroups
-* As a result you have all sequences imported and one or a few new comps, all placed into the project folder **RS render passes** created inside currently selected project folder
+* As a result you have all sequences imported and one or a few new comps, all placed into the project folder **Pass.Port - Basename** created inside currently selected project folder
 * The script saves all your current settings between the sessions including the last successful folder
 * **Pass.Port** creates a log file named **pass.port_log.txt** next to your AE project file, or on your desktop if your project is not saved. It contains all the actions and results of the job
 * Creates 2 undo steps, for the **Footage Import** and for **AutoComp** stage, so you can undo by one
@@ -91,6 +91,9 @@ You can run **Pass.Port** as usual using **Run Script menu**, or place it into *
 This is [the way](https://github.com/keerah/Pass.port/discussions/3)
 
 I appreciate your contribution to the development
-here on GitHub in [Issues](https://github.com/keerah/Pass.port/issues) or [Dicussios](https://github.com/keerah/Pass.port/discussions)
+
+here on GitHub in [Issues](https://github.com/keerah/Pass.port/issues) or [Dicussions](https://github.com/keerah/Pass.port/discussions)
+
 or by donating on [Gumroad](https://gumroad.com/l/PassPort)
+
 or giving feedback on Pass.Port's [Discord channel](https://discord.gg/5WhSsE2T)
