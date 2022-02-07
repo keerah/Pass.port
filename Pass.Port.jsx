@@ -1,19 +1,19 @@
-﻿// Pass_port ver 0.333
+﻿// Pass_port ver 0.4
 // AFter Effects script that imports your render passes
 // and builds full beauty composition (forthcoming feature)
-// (c) 2020-2021 Keerah. All rights reserved
-// More info keerah.com
+// (c) 2020-2022 Keerah, keerah.com. All rights reserved. 
 
 (function Pass_port(thisObj) {
 
     var Pass_port = new Object;
         Pass_port.scriptName = "Pass.port";
-        Pass_port.version = "0.333";
+        Pass_port.version = "0.4";
         Pass_port.AOVtag = (getSettings("AOVtag") != null) ? getSettings("AOVtag") : "_AOV_";
-        Pass_port.frameRate = (getSettings("frameRate") != null) ? getSettings("frameRate") : 30;
+        Pass_port.FPS = (getSettings("frameRate") != null) ? getSettings("frameRate") : 30;
         Pass_port.lastRules = (getSettings("lastRules") != null) ? getSettings("lastRules") : 0;
         Pass_port.lastPath = (getSettings("lastPath") != null) ? getSettings("lastPath") : null;
         Pass_port.autoComp = (getSettings("autoComp") != null) ? getSettings("autoComp") : true;
+        Pass_port.autoComp = (getSettings("straightA") != null) ? getSettings("straightA") : true;
         Pass_port.homeFolderName = (getSettings("homeFolderName") != null) ? getSettings("homeFolderName") : "Pass.Port ";
         Pass_port.logFile = (getSettings("logFile") != null) ? getSettings("logFile") : "pass.port_log.txt";
         Pass_port.logFile = (app.project.file != null) ? app.project.file.path + "\\" + Pass_port.logFile : Folder.desktop.fsName + "\\" + Pass_port.logFile;
@@ -96,14 +96,30 @@
             txtFPS.justify = "right"; 
 
             var fldFPS = grp2.add('edittext {properties: {name: "fldFPS"}}'); 
-            fldFPS.text = Pass_port.frameRate; 
+            fldFPS.text = Pass_port.FPS; 
             fldFPS.preferredSize.width = 60;
 
-            var chkAutocomp = grp2.add("checkbox", undefined, undefined, {name: "chkAutocomp"}); 
-            chkAutocomp.helpTip = "Sort footage in compositions"; 
-            chkAutocomp.text = "Autocomp"; 
+            //GRP3
+
+            var grp2b = palette.add("group", undefined, {name: "grp2"}); 
+            grp2b.orientation = "row"; 
+            grp2b.alignChildren = ["center","center"]; 
+            grp2b.spacing = 10; 
+            grp2b.margins = 0; 
+            grp2b.alignment = ["left","center"]; 
+
+            var chkAutocomp = grp2b.add("checkbox", undefined, undefined, {name: "chkAutocomp"}); 
+            chkAutocomp.helpTip = "Sort footage into compositions"; 
+            chkAutocomp.text = "Auto compositions"; 
             chkAutocomp.alignment = ["left","center"]; 
             chkAutocomp.value = Pass_port.autoComp;
+
+            var chkStraightA = grp2b.add("checkbox", undefined, undefined, {name: "chkStraightA"}); 
+            chkStraightA.helpTip = "Straight Alpha (if present)"; 
+            chkStraightA.text = "Straight Alpha"; 
+            chkStraightA.alignment = ["left","center"]; 
+            chkStraightA.value = Pass_port.straightA;
+
 
             // div 1
 
@@ -117,6 +133,7 @@
             grp3.alignChildren = ["left","center"]; 
             grp3.spacing = 10; 
             grp3.margins = 0; 
+            grp3.alignment = ["left","top"]; 
 
             var txtPath = grp3.add("statictext", undefined, undefined, {name: "txtPath"}); 
             txtPath.helpTip = "Path to renderpass files"; 
@@ -222,7 +239,7 @@
             fldSeparator.onChange = function() {
 
                 Pass_port.AOVtag = fldSeparator.text;
-                saveSettings("frameRate", Pass_port.AOVtag);
+                saveSettings("AOVtag", Pass_port.AOVtag);
 
             }
 
@@ -230,7 +247,14 @@
             chkAutocomp.onChange = function() {
 
                 Pass_port.autoComp = chkAutocomp.value;
-                saveSettings("frameRate", Pass_port.autoComp);
+                saveSettings("autoComp", Pass_port.autoComp);
+
+            }
+
+            chkStraightA.onChange = function() {
+
+                Pass_port.straightA = chkStraightA.value;
+                saveSettings("straightA", Pass_port.straightA);
 
             }
 
@@ -251,7 +275,7 @@
 
                 } 
             
-                if (cFolder instanceof File) { 
+                if (cFolder instanceof Folder) { 
 
                     //
 
@@ -319,7 +343,7 @@
         
                     if ((seqData) && (seqData.length > 0)) {
         
-                        var filesImported = importData(seqData, 25);
+                        var filesImported = importData(seqData, Pass_port.FPS);
                         logIt("   " + filesImported + " imported", 1);
         
                         if (filesImported > 0) {
@@ -356,12 +380,13 @@
 
             case 0: 
                 // RS C4D
-                return [{name: "Beauty", tag: "Beauty", alttag: "Beauty", type: 0, light: false},
+                return [{name: "Beauty", tag: "Beauty", alttag: "Beauty", type: 0, light: true},
+                        {name: "Main", tag: "Main", alttag: "Main", type: 0, light: false},
                         {name: "Diffuse Lighting", tag: "Diffuse", alttag: "Diff", type: 0, light: true}, 
-                        {name: "Specular Lighting", tag: "Speculars", alttag: "Specs", type: 0, light: true},
-                        {name: "Reflections", tag: "Reflections", alttag: "Reflect", type: 0, light: true},
-                        {name: "Refractions", tag: "Refractions", alttag: "Refract", type: 0, light: true},
-                        {name: "Subsurface Scatter", tag: "SSS", alttag: "Subsurface", type: 0, light: true},
+                        {name: "Specular Lighting", tag: "SpecularLighting", alttag: "Spec", type: 0, light: true},
+                        {name: "Reflections", tag: "Reflections", alttag: "Refl", type: 0, light: true},
+                        {name: "Refractions", tag: "Refractions", alttag: "Refr", type: 0, light: true},
+                        {name: "Subsurface Scatter", tag: "SSS", alttag: "Subsurf", type: 0, light: true},
                         {name: "Caustics", tag: "Caustics", alttag: "Caust", type: 0, light: true},
                         {name: "Emission", tag: "Emission", alttag: "Emissive", type: 0, light: true},
                         {name: "Global Illumination", tag: "GI", alttag: "Global", type: 0, light: true},
@@ -369,28 +394,36 @@
                         {name: "Volume Fog Emission", tag: "VolumeFogEmission", alttag: "VolFogEm", type: 0, light: false},
                         {name: "Volume Fog Tint", tag: "VolumeFogTint", alttag: "VolFogTint", type: 0, light: false},
                         {name: "Background", tag: "Background", alttag: "BG", type: 0, light: false},
-                        {name: "Diffuse Filter", tag: "DiffuseFilter", alttag: "DiffFlt", type: 1, light: true},
-                        {name: "Diffuse Lighting Raw", tag: "DiffuseLightingRaw", alttag: "DiffRaw", type: 1, light: true},
-                        {name: "Reflection Filter", tag: "ReflectionFilter", alttag: "ReflFlt", type: 1, light: true},
-                        {name: "Reflection Raw", tag: "ReflectionRaw", alttag: "ReflRaw", type: 1, light: true},
-                        {name: "Refraction Filter", tag: "RefractionFilter", alttag: "RefrFlt", type: 1, light: true},
-                        {name: "Refraction Raw", tag: "RefractionRaw", alttag: "RefrRaw", type: 1, light: true},
-                        {name: "Subscatter Surface Raw", tag: "SubscatterSurfaceRaw", alttag: "SSSRaw", type: 1, light: true},
-                        {name: "Global Illumination Raw", tag: "GIRaw", alttag: "GlobalRaw", type: 1, light: true},
-                        {name: "Caustics Raw", tag: "CausticsRaw", alttag: "CaustRaw", type: 1, light: true},
+
+                        {name: "Diffuse Filter", tag: "DiffuseFilter", alttag: "DiffFlt", type: 1, light: false},
+                        {name: "Diffuse Lighting Raw", tag: "DiffuseLightingRaw", alttag: "DiffRaw", type: 1, light: false},
+                        {name: "Reflections Filter", tag: "ReflectionsFilter", alttag: "ReflFlt", type: 1, light: false},
+                        {name: "Reflections Raw", tag: "ReflectionsRaw", alttag: "ReflRaw", type: 1, light: false},
+                        {name: "Refractions Filter", tag: "RefractionsFilter", alttag: "RefrFlt", type: 1, light: false},
+                        {name: "Refractions Raw", tag: "RefractionsRaw", alttag: "RefrRaw", type: 1, light: false},
+                        {name: "Subscatter Surface Raw", tag: "SubsurfaceRaw", alttag: "SSSRaw", type: 1, light: false},
+                        {name: "Global Illumination Raw", tag: "GIRaw", alttag: "GlobalRaw", type: 1, light: false},
+                        {name: "Caustics Raw", tag: "CausticsRaw", alttag: "CaustRaw", type: 1, light: false},
                         {name: "Translucency Filter", tag: "TransTint", alttag: "TransFlt", type: 1, light: false},
                         {name: "Transclucency Lighting Raw", tag: "TotalTransLightingRaw", alttag: "TransRaw", type: 1, light: false},
                         {name: "Translucency GI Raw", tag: "TranslucencyGIRaw", alttag: "TransGIRaw", type: 1, light: false},
-                        {name: "World Position", tag: "WorldPosition", alttag: "WorldPos", type: 2, light: false},
+                        {name: "Total Diffuse Lighting Raw", tag: "TotalDiffuseLightingRaw", alttag: "TotalRaw", type: 1, light: false},
+                        
+                        {name: "World Position", tag: "P", alttag: "Pos", type: 2, light: false},
                         {name: "Object Position", tag: "ObjectPosition", alttag: "ObjPos", type: 2, light: false},
-                        {name: "Normals", tag: "Normals", alttag: "Norm", type: 2, light: false},
+                        {name: "Normals", tag: "N", alttag: "Norm", type: 2, light: false},
                         {name: "Bump Normals", tag: "BumpNormals", alttag: "BumpNorm", type: 2, light: false},
-                        {name: "Object Bump Normals", tag: "ObjectBumpNormals", alttag: "ObjNorm", type: 2, light: false},
+                        {name: "Object-Space Bump Normals", tag: "ObjectBumpNormal", alttag: "ObjNorm", type: 2, light: false},
+                        {name: "Object-Space Positions", tag: "ObjectPosition", alttag: "ObjPos", type: 2, light: false},
+                        {name: "Object ID", tag: "ObjectID", alttag: "ID", type: 2, light: false},
                         {name: "Depth", tag: "Z", alttag: "Depth", type: 2, light: false},
-                        {name: "Shadows", tag: "Shadows", alttag: "Shadow", type: 2, light: false},
+                        {name: "Shadows", tag: "Shadows", alttag: "Shad", type: 2, light: false},
                         {name: "Motion Vectors", tag: "MotionVectors", alttag: "MV", type: 2, light: false},
                         {name: "Puzzle Matte", tag: "PuzzleMatte", alttag: "Puzzle", type: 2, light: false},
-                        {name: "Ambient Occusion", tag: "AO", alttag: "Occlusion", type: 3, light: false}];
+                        {name: "Ambient Occusion", tag: "AO", alttag: "Occlusion", type: 3, light: false},
+                        {name: "Custom", tag: "Custom", alttag: "Cust", type: 2, light: false},
+                        {name: "Cryptomatte", tag: "Cryptomatte", alttag: "Crypto", type: 2, light: false},
+                        {name: "IDs and Coverage", tag: "IDsAndCoverage", alttag: "Coverage", type: 2, light: false}];
                 break;
 
             case 1:
