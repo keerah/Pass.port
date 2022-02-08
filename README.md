@@ -1,38 +1,38 @@
 # Pass.Port
 **Pass.Port** is a scripted tool that comes to the rescue when you need to import a bunch of renderpasses (or just one) into **Adobe After Effects**, it also saves your time on compositing
 
-![menu img](https://i.imgur.com/zzlOsnc.png "Pass.Port interface")
+![image](https://user-images.githubusercontent.com/9025818/152893920-53ce0d57-3a8d-4c39-a713-44ca978ef62e.png)
 
  ## What it does:
-* After clicking the **Browse** button **Pass.Port** analyzes the files in the folder you selected to find their shared name (everything before the `_AOV_` tag, or before the framenumber if the tag is not present), let's name it **Basename**. The one detected will be shown in the Basename field
-* If **Pass.Port** was able to detect the Basename it enables the **Port** button. Click it to import all found sequences and to analyze them for the renderpass type (for the future feature of auto compositing) and for the lightgroups
-* Then if the **AutoComp** is checked it will sort the footage into separate compositions corresponding to the detected lightgroups
-* As a result you have all sequences imported and one or a few new comps, all placed into the project folder **Pass.Port - Basename** created inside currently selected project folder
-* The script saves all your current settings between the sessions including the last successful folder
-* **Pass.Port** creates a log file named **pass.port_log.txt** next to your AE project file, or on your desktop if your project is not saved. It contains all the actions and results of the job
-* Creates 2 undo steps, for the **Footage Import** and for **AutoComp** stage, so you can undo by one
+* After clicking the **Browse** button **Pass.Port** analyzes the files in the folder you selected to find their shared name (everything before the `_AOV_` tag, or before the framenumber if the tag is not present), let's name it **Basename**. The one detected will be shown in the Basename field.
+* You can manually change the path and the basename fields as required.
+* The **Parse** button will rescan the last useful folder for the basename again.
+* **AutoComp** option will sort the footage into separate compositions corresponding to the detected lightgroups (if any).
+* **Straight Alpha** will switch all footage with alpha to Straight interpretation.
+* As a result you will have all the sequences imported and one or a few new comps. It will disable all utility AOVS and move them to the top of the compostition. The assets will be placed into the project folder **Pass.Port - Basename** created inside the folder slected prior the import.
+* The script saves all your settings between the sessions.
+* **Pass.Port** creates a log file named **pass.port_log.txt** next to your AE project file, or on your desktop if your project is not saved. It contains a log of operations for you and for possible debugging.
+* **Pass.Port** Creates 2 undo steps, for the **Footage Import** and one for **AutoComp** stage, so you can undo by one.
+* Tested on Windows only.
+* **Pass.Port** supports multiple passes of the same type (PuzzleA, PuzzleB, PuzzleNew, etc).
 
-## What it does not (yet):
-* Doesn't rebuild your composition by the book yet, but its 100% next feature
-* Doesn't support multi-layered EXRs by now
-* Parsing is built based on the default renderpass naming of C4D Redshift (with some freedom). Other Rule sets are on the list, but as long as you comply to the same rules you can use **Pass.Port** with any other render engine
-* Tested on Windows only, cannot promise if it'll work on Mac yet
+## Limitations (by now):
+* It doesn't rebuild your composition by the book yet, but its 100% next feature.
+* Doesn't support multi-layered EXRs and do not unfold Cryptomasks into compositions by now.
 * Doesn't change any of your files and doesn't access the internet
+* Framenumbers must be at least **4 digits long**. It will be much more flexible very soon!
+* It has bugs, and I guess a lot of them :)
 
-## Naming the renderpasses:
+## Naming the AOVs:
 
-The default C4D Redshift renderpasses naming system was taken for the reference, so it must work effortlessly for the case. Some alternative passnames (see below) are taken from RS Houdini, so it should also work fine for it
+The default Redshift for Cinema 4D AOVs naming system was taken for the reference, so it must work effortlessly for the case. Alternative AOV names (see below) are taken from RS Houdini. Other Rule sets are on the list.
 
 #### An example of Pass.Port compatible naming:
 
-![menu img](https://i.imgur.com/jnj5JBs.png "Naming the passes")
+![image](https://user-images.githubusercontent.com/9025818/152895068-3a72bca3-4dc5-45e4-b9ec-63ca74dd5879.png)
 
-The **Basename** for these sequences is **ForestFront1_Front** (all symbols before AOV tag or before the framenumber)
-After the AOV tag the `_` symbol separates the renderpass and lightgroup tags
-
-**Framenumbers must always be at least 4 digits long**
-
-As you can see on the picture above **Pass.Port** supports multiple passes of the same type (PuzzleA, PuzzleB, PuzzleNew, etc). Just avoid numbers in their names, and the script will handle them well
+The **Basename** for these sequences is **shot1** (all symbols before AOV tag or before the framenumber)
+After the AOV tag the `_` symbol separates the renderpass type and the lightgroup name
 
 #### Built-in renderpass name variations:
 
@@ -40,40 +40,48 @@ For each Rule Set you will have one alternative renderpass name. Since there's j
 
 Default (C4D RS) | Alternative
 ----------|---------------
-Diffuse | Diff
-Speculars | Spec
-Reflections | Reflect
-Refractions | Refract
-SSS | Subsurface
-Caustics | Caust
-Emission | Emissive
-GI | Global
+Beauty | Beauty
+Main | Main
+DiffuseLighting | Diff*
+SpecularLighting | Spec*
+Reflections | Refl*
+Refractions | Refr*
+SSS | Subsurf*
+Caustics | Caust*
+Emission | Emissive*
+GI | Global*
 VolumeLighting | VolLight
 VolumeFogEmission | VolFogEm
 VolumeFogTint | VolFogTint
 Background | BG
 DiffuseFilter | DiffFlt
 DiffuseLightingRaw | DiffRaw
-ReflectionFilter | ReflFlt
-ReflectionRaw | ReflRaw
-RefractionFilter | RefrFlt
-ReflectionRaw | RefrRaw
-SubscatterSurfaceRaw | SSSRaw
+ReflectionsFilter | ReflFlt
+ReflectionsRaw | ReflRaw
+RefractionsFilter | RefrFlt
+ReflectionsRaw | RefrRaw
+SubsurfaceRaw | SSSRaw
 GIRaw | GlobalRaw
-CausticsRaw | CaustRaw
-TransTint | TransFlt
-TotalTransLightingRaw | TransRaw
-TranslucencyGIRaw | TransGIRaw
-WorldPosition | WorldPos
-ObjectPosition | ObjPos
-Normals | Norm
-BumpNormals | BumpNorm
-ObjectBumpNormals | ObjNorm
-Z | Depth
-Shadows | Shadow
-MotionVectors | MV
-PuzzleMatte | Puzzle
-AO | Occlusion
+CausticsRaw | CaustRaw*
+TransTint | TransFlt*
+TotalTransLightingRaw | TransRaw*
+TranslucencyGIRaw | TransGIRaw*
+TotalDiffuseLightingRaw | TotalRaw*
+P | Pos*
+ObjectPosition | ObjPos*
+N | Norm*
+BumpNormals | BumpNorm*
+ObjectBumpNormals | ObjNorm*
+ObjectPosition | ObjPos*
+ObjectID | ID*
+Z | Depth*
+Shadows | Shad*
+MotionVectors | MV*
+PuzzleMatte | Puzzle*
+AO | Occlusion*
+Custom | Cust*
+Cryptomatte | Crypto*
+IDsAndCoverage | Coverage*
 
 #### A tip for consistent basename with C4D:
 
