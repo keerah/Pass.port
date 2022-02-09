@@ -94,6 +94,9 @@ Or, main: `.../$camera/$camera`, AOVs: `$camera_AOV`
 ## Usage
 You can run **Pass.Port** as usual using **Run Script menu**, or place it into **...Support Files\Scripts\ScriptUI Panels** to be able to dock it into your AE interface
 
+## Contributors ♥
+[![Lukacz](https://avatars.githubusercontent.com/u/79062574?s=120&v=4)](https://github.com/xrossfader)
+
 ## Development Roadmap
 
 This is [the way](https://github.com/keerah/Pass.port/discussions/3)
